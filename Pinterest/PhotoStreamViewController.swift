@@ -20,12 +20,18 @@ class PhotoStreamViewController: UICollectionViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
+    if let layout = collectionView?.collectionViewLayout as? PinterestLayout {
+      layout.delegate = self
+    }
+    
+    
     if let patternImage = UIImage(named: "Pattern") {
       view.backgroundColor = UIColor(patternImage: patternImage)
     }
     
     collectionView!.backgroundColor = UIColor.clear
     collectionView!.contentInset = UIEdgeInsets(top: 23, left: 5, bottom: 10, right: 5)
+    
   }
   
 }
@@ -44,3 +50,31 @@ extension PhotoStreamViewController {
   
 }
 
+extension PhotoStreamViewController: PinterestLayoutDelegate {
+  func collectionView(_ collectionView: UICollectionView, heightForPhotoAt indexPath: IndexPath, withWidth width: CGFloat) -> CGFloat {
+    let photo = photos[indexPath.item]
+    let boundingRect = CGRect(x: 0, y: 0, width: width, height: CGFloat(MAXFLOAT))
+    let rect = AVMakeRect(aspectRatio: photo.image.size, insideRect: boundingRect)
+    
+    return rect.height
+    
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, heightForAnnotationAt indexPath: IndexPath, withWidth width: CGFloat) -> CGFloat {
+    let annoPadding = CGFloat(4)
+    let annoHeaderHeight = CGFloat(17)
+    let photo = photos[indexPath.item]
+    let font = UIFont.systemFont(ofSize: 10)
+    let commentHeight = photo.heightForComment(font, width: width)
+    let height = annoPadding + annoHeaderHeight + commentHeight + annoPadding
+    return height
+    
+    
+    
+  }
+  
+  
+  
+  
+  
+}

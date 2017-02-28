@@ -41,12 +41,56 @@ class PinterestLayout: UICollectionViewLayout {
       }
       
       var column = 0
-      var yOffset = [CGFloat](count: numberOfColumns, repeatedValue: 0)
+      var yOffset = [CGFloat](repeating: 0, count: numberOfColumns)
       
-      
+      for item in 0..<collectionView!.numberOfItems(inSection: 0) {
+        let indexPath = IndexPath(item: item, section: 0)
+        
+        let width = contentWidth - cellPadding * 2
+        
+        let pictureHeight = delegate.collectionView(collectionView!, heightForPhotoAt: indexPath, withWidth: width)
+        let annoHeight = delegate.collectionView(collectionView!, heightForAnnotationAt: indexPath, withWidth: width)
+        
+        let height = pictureHeight + annoHeight + cellPadding * 2
+        
+        let frame = CGRect(x: xOffset[column], y: yOffset[column], width: columnWidth, height: height)
+        let insetFrame = frame.insetBy(dx: cellPadding, dy: cellPadding)
+        
+        let attr = UICollectionViewLayoutAttributes(forCellWith: indexPath)
+        
+        attr.frame = insetFrame
+        cache.append(attr)
+        
+        contentHeight = max(contentHeight, frame.maxY)
+        yOffset[column] += height
+        
+        
+        column += 1
+        column %= numberOfColumns
+        
+      }
       
     }
   }
+  
+  override var collectionViewContentSize: CGSize {
+    return CGSize(width: contentWidth, height: contentHeight)
+  }
+  
+  override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+    var layoutAttrs = [UICollectionViewLayoutAttributes]()
+    
+    for attr in cache {
+      if rect.intersects(attr.frame) {
+        layoutAttrs.append(attr)
+      }
+    }
+    
+    return layoutAttrs
+  }
+  
+  
+  
   
   
 }
