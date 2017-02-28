@@ -75,7 +75,6 @@ class PinterestLayout: UICollectionViewLayout {
         let pictureHeight = delegate.collectionView(collectionView!, heightForPhotoAt: indexPath, withWidth: width)
         let annoHeight = delegate.collectionView(collectionView!, heightForAnnotationAt: indexPath, withWidth: width)
         
-        print("\(item)  pic h: \(pictureHeight)  annoH: \(annoHeight)   width:\(width)")
         
         let height = pictureHeight + annoHeight + cellPadding * 2
         
